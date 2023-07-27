@@ -56,6 +56,7 @@ const NavBar = () => {
                 </NavLink>
               </NavItem>
               {isAuthenticated && (
+              <React.Fragment>
                 <NavItem>
                   <NavLink
                     tag={RouterNavLink}
@@ -66,7 +67,18 @@ const NavBar = () => {
                     External API
                   </NavLink>
                 </NavItem>
-              )}
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    to="/pacientes"
+                    exact
+                    activeClassName="router-link-exact-active"
+                  >
+                    Pacientes
+                  </NavLink>
+                </NavItem>
+              </React.Fragment>
+            )}
             </Nav>
             <Nav className="d-none d-md-block" navbar>
               {!isAuthenticated && (

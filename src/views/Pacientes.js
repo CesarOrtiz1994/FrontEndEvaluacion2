@@ -3,6 +3,7 @@ import Highlight from "../components/Highlight";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { getConfig } from "../config";
 import Loading from "../components/Loading";
+import { Alert, Button } from "reactstrap";
 
 export const PacientesApiComponent = () => {
   const { apiOrigin = "http://localhost:3010", audience } = getConfig();
@@ -10,6 +11,12 @@ export const PacientesApiComponent = () => {
   const [state, setState] = useState({
     showResult: false,
     apiMessage: "",
+    error: null,
+  });
+
+  const [pacientes, setPacientes] = useState({
+    showResult: false,
+    apiResponse: "",
     error: null,
   });
 
@@ -79,6 +86,31 @@ export const PacientesApiComponent = () => {
     }
   };
 
+  const getPacientes = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      
+      const response = await fetch(`${apiOrigin}/api/pacientes`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const responseData = await response.json();
+      console.log("pacientes", responseData);
+      setPacientes({
+        ...pacientes,
+        showResult: true,
+        apiResponse: responseData
+      });
+    } catch (error) {
+      setState({
+        ...state,
+        error: error.error,
+      });
+    }
+  };
+
   const handle = (e, fn) => {
     e.preventDefault();
     fn();
@@ -123,6 +155,14 @@ export const PacientesApiComponent = () => {
         >
           Ping API
         </Button>
+        <Button
+          color="primary"
+          className="mt-5"
+          onClick={getPacientes}
+          disabled={!audience}
+        >
+          Pacientes
+        </Button>
       </div>
 
       <div className="result-block-container">
@@ -132,6 +172,19 @@ export const PacientesApiComponent = () => {
             <Highlight>
               <span>{JSON.stringify(state.apiMessage, null, 2)}</span>
             </Highlight>
+            <Button
+              color="primary"
+              className="mt-5"
+              onClick={(e) =>
+                setState({
+                  ...state,
+                  showResult: false,
+                })
+              }
+              disabled={!audience}
+            >
+              ocultar
+            </Button>
           </div>
         )}
       </div>
