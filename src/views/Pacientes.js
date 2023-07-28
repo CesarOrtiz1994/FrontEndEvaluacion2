@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Highlight from "../components/Highlight";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { getConfig } from "../config";
 import Loading from "../components/Loading";
 import { Alert, Button } from "reactstrap";
+import { AiOutlineUserAdd } from "react-icons/ai";
 
 export const PacientesApiComponent = () => {
   const { apiOrigin = "http://localhost:3010", audience } = getConfig();
@@ -20,11 +21,8 @@ export const PacientesApiComponent = () => {
     error: null,
   });
 
-  const {
-    getAccessTokenSilently,
-    loginWithPopup,
-    getAccessTokenWithPopup,
-  } = useAuth0();
+  const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } =
+    useAuth0();
 
   const handleConsent = async () => {
     try {
@@ -89,7 +87,7 @@ export const PacientesApiComponent = () => {
   const getPacientes = async () => {
     try {
       const token = await getAccessTokenSilently();
-      
+
       const response = await fetch(`${apiOrigin}/api/pacientes`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -97,11 +95,10 @@ export const PacientesApiComponent = () => {
       });
 
       const responseData = await response.json();
-      console.log("pacientes", responseData);
       setPacientes({
         ...pacientes,
         showResult: true,
-        apiResponse: responseData
+        apiResponse: responseData,
       });
     } catch (error) {
       setState({
@@ -111,6 +108,10 @@ export const PacientesApiComponent = () => {
     }
   };
 
+  useEffect(() => {
+    getPacientes();
+  }, []);
+
   const handle = (e, fn) => {
     e.preventDefault();
     fn();
@@ -119,7 +120,6 @@ export const PacientesApiComponent = () => {
   return (
     <>
       <div className="mb-5">
-      
         {state.error === "consent_required" && (
           <Alert color="warning">
             You need to{" "}
@@ -146,24 +146,54 @@ export const PacientesApiComponent = () => {
           </Alert>
         )}
 
-        <h1>Pacientes</h1>
+        <div className="d-flex justify-content-between">
+          <h1>Pacientes</h1>
+          <button
+            className="btn btn-outline-success fs-5 mb-2"
+            // onClick={handleShowNuevo}
+          >
+            <AiOutlineUserAdd /> Nuevo Paciente
+          </button>
+        </div>
 
-        <Button
-          color="primary"
-          className="mt-5"
-          onClick={callApi}
-          disabled={!audience}
-        >
-          Ping API
-        </Button>
-        <Button
-          color="primary"
-          className="mt-5"
-          onClick={getPacientes}
-          disabled={!audience}
-        >
-          Pacientes
-        </Button>
+        <div className="divhr"></div>
+        <br />
+
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Edad</th>
+              <th scope="col">Tipo de sangre</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          { console.log(pacientes.apiResponse) }
+          <tbody>
+            {pacientes.apiResponse.map((pacientes) => (
+              
+              <tr key={pacientes._id}>
+                <td>{pacientes.name}</td>
+                <td>{pacientes.edad}</td>
+                <td>{pacientes.sangre}</td>
+                <td>
+                  <button
+                    className="btn btn-outline-danger me-2"
+                    // onClick={() => deleteUsuario(usuario.id)}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    className="btn btn-outline-warning"
+                    // onClick={() => handleShowEdit(usuario.id)}
+                  >
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="result-block-container">

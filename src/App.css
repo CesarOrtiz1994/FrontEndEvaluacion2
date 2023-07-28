@@ -43,3 +43,9 @@
 .conter.inactive {
   margin-left: 80px !important;
 }
+
+.divhr {
+  height: 1px;
+  width: 100%;
+  background-color: var(--color-primary);
+}
