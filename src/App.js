@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Router, Route, Switch } from "react-router-dom";
-import { Container } from "reactstrap";
 
 import Loading from "./components/Loading";
 import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
 import ExternalApi from "./views/ExternalApi";
@@ -45,15 +43,13 @@ const App = () => {
         }}
       />
         ): <NavBar /> }
-        <Container className="flex-grow-1 mt-5">
+        <div className={`conter ${inactive ? "inactive" : ""}`}>
           <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/profile" component={Profile} />
+            { isAuthenticated ? ( <Route path="/" exact component={Profile} /> ) : ( <Route path="/" exact component={Home} /> )}
             <Route path="/external-api" component={ExternalApi} />
             <Route path="/pacientes" component={Pacientes} />
           </Switch>
-        </Container>
-        <Footer />
+        </div>
       </div>
     </Router>
   );

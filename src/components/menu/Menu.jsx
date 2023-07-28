@@ -8,9 +8,21 @@ import {
 import { FaHome, FaUserCircle } from "react-icons/fa";
 import { FiPackage } from "react-icons/fi";
 import MenuItems from "./MenuItems";
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 export default function Menu(props) {
   const [inactive, setInactive] = useState(false);
+  const {
+    logout
+  } = useAuth0();
+
+  const logoutWithRedirect = () =>
+    logout({
+        logoutParams: {
+          returnTo: window.location.origin,
+        }
+    });
 
   let menuItems = [];
 
@@ -18,17 +30,17 @@ export default function Menu(props) {
     {
       name: "Home",
       icon: <FaHome />,
-      to: "/sistema",
+      to: "/",
     },
     {
-      name: "Usuarios",
+      name: "Pacientes",
       icon: <FaUserCircle />,
-      to: "/sistema/usuarios",
+      to: "/pacientes",
     },
     {
-      name: "Materiales",
+      name: "Medicamentos",
       icon: <FiPackage />,
-      to: "/sistema/materiales",
+      to: "/pacientes",
     },
   ];
 
@@ -68,12 +80,12 @@ export default function Menu(props) {
       <div className="side-menu-footer">
         <ul>
           <li>
-            <a href="#" >
+            <button onClick={() => logoutWithRedirect()} className="menu-item">
               <div className="menu-icon">
                 <BsDoorClosedFill />
               </div>
               <span>Cerrar Sesión</span>
-            </a>
+            </button>
           </li>
         </ul>
       </div>

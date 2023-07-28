@@ -151,6 +151,8 @@ li{
     font-weight: 600;
     margin-bottom: 10px;
     cursor: pointer;
+    border: none;
+    background-color: transparent;
 }
 
 .side-menu-footer .menu-item:hover{
