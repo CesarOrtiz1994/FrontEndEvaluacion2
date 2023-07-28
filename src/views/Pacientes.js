@@ -119,6 +119,7 @@ export const PacientesApiComponent = () => {
   return (
     <>
       <div className="mb-5">
+      
         {state.error === "consent_required" && (
           <Alert color="warning">
             You need to{" "}

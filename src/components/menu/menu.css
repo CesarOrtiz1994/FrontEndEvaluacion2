@@ -1,0 +1,201 @@
+:root{
+    /* colores */
+    --color-warning: #FDC80B;
+    --color-sussece: #32D338;
+    --color-primary: #0b5f97;
+    --color-secondary: #3e80ac;
+    --color-blanco: #FFFFFF;
+    --color-hover: #a5dafd;
+  }
+
+ul{
+    padding: 0;
+    margin: 0;
+}
+
+li{
+    list-style: none;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.side-menu{
+    position: fixed;
+    background: var(--color-primary);
+    width: 300px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 30px 20px;
+    transition: width 0.3s ease-in;
+}
+
+.side-menu.inactive {
+    width: 80px;
+}
+
+.side-menu .top-section .logo{
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.side-menu .top-section {
+    position: relative;
+}
+
+.side-menu .top-section p {
+    color: var(--color-blanco);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.side-menu .top-section .logo img{
+    max-width: 100%;
+    max-height: 100%;
+    
+}
+
+.side-menu .top-section .toggle-menu-btn{
+    color: var(--color-blanco);
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.side-menu .top-section .toggle-menu-btn:hover{
+    color: var(--color-hover);
+}
+
+.side-menu.inactive .top-section .toggle-menu-btn:hover{
+    color: var(--color-hover);
+}
+
+.side-menu.inactive .top-section .toggle-menu-btn{
+    right: -50px;
+    color: var(--color-primary);
+}
+
+.side-menu .main-menu ul {
+    padding: 0 !important;
+}
+
+.side-menu .main-menu li {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+.side-menu .main-menu .menu-item{
+    color: var(--color-blanco);
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.side-menu .main-menu .menu-item:hover{
+    background: var(--color-hover);
+    border-radius: 5px;
+}
+
+.side-menu .main-menu{
+    margin: 5px 0;
+}
+
+.side-menu .main-menu .menu-item .menu-icon{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+}
+
+.side-menu .main-menu .menu-item span{
+    position: absolute;
+    display: inline-block ;
+    line-height: 40px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in;
+}
+
+.side-menu.inactive .main-menu .menu-item span{
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.side-menu-footer{
+    width: 100%;
+    height: 80px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-top: 20px;
+    background: #333;
+    color: var(--color-blanco);
+}
+
+.side-menu-footer .menu-item {
+    color: var(--color-blanco);
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.side-menu-footer .menu-item:hover{
+    color: red;
+}
+
+.side-menu-footer ul {
+    padding-left: 1rem ;
+}
+
+.side-menu-footer  li {
+    height: 100%;
+    width: 100%;
+    margin: 0 ;
+}
+
+.side-menu-footer .menu-item span{
+    position: absolute;
+    display: inline-block ;
+    line-height: 40px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in;
+}
+
+.side-menu.inactive .side-menu-footer .menu-item span{
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.side-menu-footer .menu-item .menu-icon{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: var(--color-blanco);
+    margin: 20px 0;
+}
+
+

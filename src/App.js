@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import { Container } from "reactstrap";
 
@@ -11,6 +11,7 @@ import ExternalApi from "./views/ExternalApi";
 import Pacientes from "./views/Pacientes";
 import { useAuth0 } from "@auth0/auth0-react";
 import history from "./utils/history";
+import Menu from "./components/menu/Menu";
 
 // styles
 import "./App.css";
@@ -20,7 +21,9 @@ import initFontAwesome from "./utils/initFontAwesome";
 initFontAwesome();
 
 const App = () => {
-  const { isLoading, error } = useAuth0();
+  const { isLoading, error, isAuthenticated } = useAuth0();
+  const [inactive, setInactive] = useState(false);
+
 
   if (error) {
     return <div>Oops... {error.message}</div>;
@@ -33,7 +36,15 @@ const App = () => {
   return (
     <Router history={history}>
       <div id="app" className="d-flex flex-column h-100">
-        <NavBar />
+        { console.log(isAuthenticated)}
+        { isAuthenticated ? (
+        <Menu
+        onCollapse={(inactive) => {
+          //console.log(inactive);
+          setInactive(inactive);
+        }}
+      />
+        ): <NavBar /> }
         <Container className="flex-grow-1 mt-5">
           <Switch>
             <Route path="/" exact component={Home} />
