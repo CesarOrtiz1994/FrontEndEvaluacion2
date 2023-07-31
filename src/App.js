@@ -10,6 +10,8 @@ import Pacientes from "./views/Pacientes";
 import { useAuth0 } from "@auth0/auth0-react";
 import history from "./utils/history";
 import Menu from "./components/menu/Menu";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // styles
 import "./App.css";
@@ -34,11 +36,9 @@ const App = () => {
   return (
     <Router history={history}>
       <div id="app" className="d-flex flex-column h-100">
-        { console.log(isAuthenticated)}
         { isAuthenticated ? (
         <Menu
         onCollapse={(inactive) => {
-          //console.log(inactive);
           setInactive(inactive);
         }}
       />
