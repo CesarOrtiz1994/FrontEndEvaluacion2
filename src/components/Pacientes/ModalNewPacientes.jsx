@@ -11,8 +11,7 @@ export default function ModalNewPacientes({ show, handleClose }) {
   const [nombre, setNombre] = useState("");
   const [edad, setEdad] = useState("");
   const [tipoSangre, setTipoSangre] = useState("");
-  const { getAccessTokenSilently } =
-  useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
 
   const [pacientes, setPacientes] = useState({
     showResult: false,
@@ -35,6 +34,7 @@ export default function ModalNewPacientes({ show, handleClose }) {
           name: nombre,
           edad: edad,
           sangre: tipoSangre,
+          idDoctor: user.sub,
         }),
         headers: {
           'Content-Type': 'application/json',

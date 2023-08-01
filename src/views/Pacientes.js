@@ -9,7 +9,6 @@ import ModalEditPacientes from "../components/Pacientes/ModalEditPacientes";
 import ModalNewPaciente from "../components/Pacientes/ModalNewPacientes";
 import { ToastContainer } from "react-toastify";
 
-
 export const PacientesApiComponent = () => {
   const { apiOrigin = "http://localhost:3010" } = getConfig();
 
@@ -29,8 +28,7 @@ export const PacientesApiComponent = () => {
   const [showEdit, setShowEdit] = useState(false);
   const [id, setId] = useState(0);
 
-  const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } =
-    useAuth0();
+  const { user, getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } = useAuth0();
 
   const handleClose = () => {
     setShowNuevo(false);
@@ -116,7 +114,12 @@ export const PacientesApiComponent = () => {
       const token = await getAccessTokenSilently();
 
       const response = await fetch(`${apiOrigin}/api/pacientes`, {
+        method: "POST",
+        body: JSON.stringify({
+          idDoctor: user.sub
+        }),
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
