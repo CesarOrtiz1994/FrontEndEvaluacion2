@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react"
-import Highlight from "../components/Highlight"
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react"
 import { getConfig } from "../config"
 import Loading from "../components/Loading"
-import { Alert, Button } from "reactstrap"
+import { Alert } from "reactstrap"
 import { AiOutlineUserAdd } from "react-icons/ai"
 
+import ModalEditPacientes from "../components/Pacientes/ModalEditPacientes"
+import ModalNewPaciente from "../components/Pacientes/ModalNewPacientes"
+import { ToastContainer } from "react-toastify"
+
 export const PacientesApiComponent = () => {
-  const { apiOrigin = "http://localhost:3010", audience } = getConfig()
+  const { apiOrigin = "http://localhost:3010" } = getConfig()
 
   const [state, setState] = useState({
     showResult: false,
@@ -21,8 +24,31 @@ export const PacientesApiComponent = () => {
     error: null,
   })
 
+  const [showNuevo, setShowNuevo] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
+  const [id, setId] = useState(0)
+
   const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } =
     useAuth0()
+
+  const handleClose = () => {
+    setShowNuevo(false)
+    setShowEdit(false)
+    getPacientes()
+  }
+
+  const handleShowNuevo = () => {
+    setShowNuevo(true)
+  }
+
+  const handleShowEdit = (id) => {
+    setShowEdit(true)
+    setId(id)
+  }
+
+  useEffect(() => {
+    getPacientes()
+  }, [])
 
   const handleConsent = async () => {
     try {
@@ -106,10 +132,6 @@ export const PacientesApiComponent = () => {
     }
   }
 
-  useEffect(() => {
-    getPacientes()
-  }, [])
-
   const handle = (e, fn) => {
     e.preventDefault()
     fn()
@@ -117,6 +139,7 @@ export const PacientesApiComponent = () => {
 
   return (
     <>
+      <ToastContainer />
       <div className="mb-5">
         {state.error === "consent_required" && (
           <Alert color="warning">
@@ -148,7 +171,7 @@ export const PacientesApiComponent = () => {
           <h1>Pacientes</h1>
           <button
             className="btn btn-outline-success fs-5 mb-2"
-            // onClick={handleShowNuevo}
+            onClick={handleShowNuevo}
           >
             <AiOutlineUserAdd /> Nuevo Paciente
           </button>
@@ -157,20 +180,18 @@ export const PacientesApiComponent = () => {
         <div className="divhr"></div>
         <br />
 
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Edad</th>
-              <th scope="col">Tipo de sangre</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          {/* {console.log(pacientes.apiResponse)} */}
-
-          <tbody>
-            {pacientes.apiResponse.length > 0 &&
-              pacientes.apiResponse.map((pacientes) => (
+        {pacientes.apiResponse && (
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Edad</th>
+                <th scope="col">Tipo de sangre</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pacientes.apiResponse.map((pacientes) => (
                 <tr key={pacientes._id}>
                   <td>{pacientes.name}</td>
                   <td>{pacientes.edad}</td>
@@ -184,43 +205,27 @@ export const PacientesApiComponent = () => {
                     </button>
                     <button
                       className="btn btn-outline-warning"
-                      // onClick={() => handleShowEdit(usuario.id)}
+                      onClick={() => handleShowEdit(pacientes._id)}
                     >
                       Editar
                     </button>
                   </td>
                 </tr>
               ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="result-block-container">
-        {state.showResult && (
-          <div
-            className="result-block"
-            data-testid="api-result"
-          >
-            <h6 className="muted">Result</h6>
-            <Highlight>
-              <span>{JSON.stringify(state.apiMessage, null, 2)}</span>
-            </Highlight>
-            <Button
-              color="primary"
-              className="mt-5"
-              onClick={(e) =>
-                setState({
-                  ...state,
-                  showResult: false,
-                })
-              }
-              disabled={!audience}
-            >
-              ocultar
-            </Button>
-          </div>
+            </tbody>
+          </table>
         )}
       </div>
+
+      <ModalNewPaciente
+        show={showNuevo}
+        handleClose={handleClose}
+      />
+      <ModalEditPacientes
+        show={showEdit}
+        handleClose={handleClose}
+        id_paciente={id}
+      />
     </>
   )
 }
