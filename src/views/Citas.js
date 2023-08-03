@@ -15,7 +15,7 @@ export const PacientesApiComponent = () => {
     error: null,
   })
 
-  const [pacientes, setPacientes] = useState({
+  const [citas, setCitas] = useState({
     showResult: false,
     apiResponse: "",
     error: null,
@@ -37,8 +37,7 @@ export const PacientesApiComponent = () => {
         error: error.error,
       })
     }
-
-    // await callApi()
+    await callApi()
   }
 
   const handleLoginAgain = async () => {
@@ -55,46 +54,46 @@ export const PacientesApiComponent = () => {
       })
     }
 
-    // await callApi()
+    await callApi()
   }
 
-  // const callApi = async () => {
-  //   try {
-  //     const token = await getAccessTokenSilently()
-  //     console.log(token)
-
-  //     const response = await fetch(`${apiOrigin}/api/private`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-
-  //     const responseData = await response.json()
-
-  //     setState({
-  //       ...state,
-  //       showResult: true,
-  //       apiMessage: responseData,
-  //     })
-  //   } catch (error) {
-  //     setState({
-  //       ...state,
-  //       error: error.error,
-  //     })
-  //   }
-  // }
-
-  const getPacientes = async () => {
+  const callApi = async () => {
     try {
       const token = await getAccessTokenSilently()
-      const response = await fetch(`${apiOrigin}/api/pacientes`, {
+      console.log(token)
+
+      const response = await fetch(`${apiOrigin}/api/private`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const responseData = await response.json()
+
+      setState({
+        ...state,
+        showResult: true,
+        apiMessage: responseData,
+      })
+    } catch (error) {
+      setState({
+        ...state,
+        error: error.error,
+      })
+    }
+  }
+
+  const getCitas = async () => {
+    try {
+      const token = await getAccessTokenSilently()
+      const response = await fetch(`${apiOrigin}/api/citas`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       const responseData = await response.json()
-      setPacientes({
-        ...pacientes,
+      setCitas({
+        ...citas,
         showResult: true,
         apiResponse: responseData,
       })
@@ -107,7 +106,8 @@ export const PacientesApiComponent = () => {
   }
 
   useEffect(() => {
-    getPacientes()
+    getCitas()
+    console.log(citas.apiResponse)
   }, [])
 
   const handle = (e, fn) => {
@@ -160,21 +160,21 @@ export const PacientesApiComponent = () => {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Edad</th>
-              <th scope="col">Tipo de sangre</th>
+              <th scope="col">Paciente`</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Hora</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
           {/* {console.log(pacientes.apiResponse)} */}
 
           <tbody>
-            {pacientes.apiResponse.length > 0 &&
-              pacientes.apiResponse.map((pacientes) => (
-                <tr key={pacientes._id}>
-                  <td>{pacientes.name}</td>
-                  <td>{pacientes.edad}</td>
-                  <td>{pacientes.sangre}</td>
+            {citas.apiResponse.length > 0 &&
+              citas.apiResponse.map((cita) => (
+                <tr key={cita._id}>
+                  <td>{cita.paciente}</td>
+                  <td>{cita.fecha}</td>
+                  <td>{cita.hora}</td>
                   <td>
                     <button
                       className="btn btn-outline-danger me-2"
