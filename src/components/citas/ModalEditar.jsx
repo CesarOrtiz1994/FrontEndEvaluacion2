@@ -5,11 +5,12 @@ import Button from "react-bootstrap/Button"
 import Modal from "react-bootstrap/Modal"
 import { toast } from "react-toastify"
 
-export default function ModalEditPacientes({ show, handleClose, id_paciente }) {
+export default function ModalEditar({ show, handleClose, id_cita }) {
   const { apiOrigin = "http://localhost:3010" } = getConfig()
-  const [nombre, setNombre] = useState("")
-  const [edad, setEdad] = useState("")
-  const [tipoSangre, setTipoSangre] = useState("")
+  const [paciente, setPaciente] = useState("")
+  const [fecha, setFecha] = useState("")
+  const [hora, setHora] = useState("")
+  const [doctor, setDoctor] = useState("")
   const { getAccessTokenSilently } = useAuth0()
 
   const [state, setState] = useState({
@@ -18,33 +19,31 @@ export default function ModalEditPacientes({ show, handleClose, id_paciente }) {
     error: null,
   })
 
-  const [paciente, setPaciente] = useState({
+  const [cita, setCita] = useState({
     showResult: false,
     apiResponse: "",
     error: null,
   })
 
   useEffect(() => {
-    if (id_paciente !== 0) {
+    if (id_cita !== 0) {
       const getPaciente = async () => {
         try {
           const token = await getAccessTokenSilently()
 
-          const response = await fetch(
-            `${apiOrigin}/api/paciente/${id_paciente}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
+          const response = await fetch(`${apiOrigin}/api/citas/${id_cita}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
 
           const responseData = await response.json()
           if (responseData) {
-            setNombre(responseData.name)
-            setEdad(responseData.edad)
-            setTipoSangre(responseData.sangre)
+            setPaciente(responseData.paciente)
+            setDoctor(responseData.doctor)
+            setFecha(responseData.fecha)
+            setHora(responseData.hora)
           }
         } catch (error) {
           setState({
@@ -56,19 +55,20 @@ export default function ModalEditPacientes({ show, handleClose, id_paciente }) {
 
       getPaciente()
     }
-  }, [id_paciente])
+  }, [id_cita])
 
   const edit = async (e) => {
     e.preventDefault()
     if (validate()) {
       const token = await getAccessTokenSilently()
 
-      const response = await fetch(`${apiOrigin}/api/paciente/${id_paciente}`, {
+      const response = await fetch(`${apiOrigin}/api/citas/${id_cita}`, {
         method: "PUT",
         body: JSON.stringify({
-          name: nombre,
-          edad: edad,
-          sangre: tipoSangre,
+          paciente,
+          hora,
+          fecha,
+          doctor,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -77,25 +77,25 @@ export default function ModalEditPacientes({ show, handleClose, id_paciente }) {
       })
 
       const responseData = await response.json()
-      setPaciente({
-        ...paciente,
+      setCita({
+        ...cita,
         showResult: true,
         apiResponse: responseData,
       })
-      toast.success("Paciente editado con exito")
+      toast.success("Cita modificada con exito")
       handleClose()
     }
   }
 
   const validate = () => {
-    if (nombre === "") {
-      toast.error("El nombre es obligatorio")
+    if (paciente === "") {
+      toast.error("Elegir paciente es obligatorio")
       return false
-    } else if (edad === "") {
-      toast.error("La edad es obligatoria")
+    } else if (hora === "") {
+      toast.error("La hora es requerida")
       return false
-    } else if (tipoSangre === "") {
-      toast.error("El tipo de sangre es obligatoria")
+    } else if (fecha === "") {
+      toast.error("Eliga una fecha")
       return false
     } else {
       return true
@@ -108,35 +108,35 @@ export default function ModalEditPacientes({ show, handleClose, id_paciente }) {
       onHide={handleClose}
     >
       <Modal.Header closeButton>
-        <Modal.Title>Crear nuevo Paciente</Modal.Title>
+        <Modal.Title>Modificar cita</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form onSubmit={edit}>
           <div className="mb-3">
-            <label className="form-label">Nombre</label>
+            <label className="form-label">Paciente</label>
             <input
               type="text"
               className="form-control"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              value={paciente}
+              onChange={(e) => setPaciente(e.target.value)}
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Edad</label>
+            <label className="form-label">Fecha</label>
             <input
               type="number"
               className="form-control"
-              value={edad}
-              onChange={(e) => setEdad(e.target.value)}
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Tipo de sangre</label>
+            <label className="form-label">Hora</label>
             <input
               type="text"
               className="form-control"
-              value={tipoSangre}
-              onChange={(e) => setTipoSangre(e.target.value)}
+              value={hora}
+              onChange={(e) => setHora(e.target.value)}
             />
           </div>
           {/* este es un ejemplo de como se hace un select

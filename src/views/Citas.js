@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react"
-import Highlight from "../components/Highlight"
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react"
 import { getConfig } from "../config"
 import Loading from "../components/Loading"
-import { Alert, Button } from "reactstrap"
+import { Alert } from "reactstrap"
 import { AiOutlineUserAdd } from "react-icons/ai"
 
-export const PacientesApiComponent = () => {
-  const { apiOrigin = "http://localhost:3010", audience } = getConfig()
+import ModalEditar from "../components/citas/ModalEditar"
+import ModalNew from "../components/citas/ModalNew"
+import { ToastContainer } from "react-toastify"
+
+export const Citas = () => {
+  const { apiOrigin = "http://localhost:3010" } = getConfig()
 
   const [state, setState] = useState({
     showResult: false,
@@ -21,8 +24,31 @@ export const PacientesApiComponent = () => {
     error: null,
   })
 
+  const [showNuevo, setShowNuevo] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
+  const [id, setId] = useState(0)
+
   const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } =
     useAuth0()
+
+  const handleClose = () => {
+    setShowNuevo(false)
+    setShowEdit(false)
+    getCitas()
+  }
+
+  const handleShowNuevo = () => {
+    setShowNuevo(true)
+  }
+
+  const handleShowEdit = (id) => {
+    setShowEdit(true)
+    setId(id)
+  }
+
+  useEffect(() => {
+    getCitas()
+  }, [])
 
   const handleConsent = async () => {
     try {
@@ -37,7 +63,8 @@ export const PacientesApiComponent = () => {
         error: error.error,
       })
     }
-    await callApi()
+
+    // await callApi()
   }
 
   const handleLoginAgain = async () => {
@@ -54,34 +81,34 @@ export const PacientesApiComponent = () => {
       })
     }
 
-    await callApi()
+    // await callApi()
   }
 
-  const callApi = async () => {
-    try {
-      const token = await getAccessTokenSilently()
-      console.log(token)
+  // const callApi = async () => {
+  //   try {
+  //     const token = await getAccessTokenSilently()
+  //     console.log(token)
 
-      const response = await fetch(`${apiOrigin}/api/private`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+  //     const response = await fetch(`${apiOrigin}/api/private`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
 
-      const responseData = await response.json()
+  //     const responseData = await response.json()
 
-      setState({
-        ...state,
-        showResult: true,
-        apiMessage: responseData,
-      })
-    } catch (error) {
-      setState({
-        ...state,
-        error: error.error,
-      })
-    }
-  }
+  //     setState({
+  //       ...state,
+  //       showResult: true,
+  //       apiMessage: responseData,
+  //     })
+  //   } catch (error) {
+  //     setState({
+  //       ...state,
+  //       error: error.error,
+  //     })
+  //   }
+  // }
 
   const getCitas = async () => {
     try {
@@ -105,11 +132,6 @@ export const PacientesApiComponent = () => {
     }
   }
 
-  useEffect(() => {
-    getCitas()
-    console.log(citas.apiResponse)
-  }, [])
-
   const handle = (e, fn) => {
     e.preventDefault()
     fn()
@@ -117,6 +139,7 @@ export const PacientesApiComponent = () => {
 
   return (
     <>
+      <ToastContainer />
       <div className="mb-5">
         {state.error === "consent_required" && (
           <Alert color="warning">
@@ -145,32 +168,30 @@ export const PacientesApiComponent = () => {
         )}
 
         <div className="d-flex justify-content-between">
-          <h1>Pacientes</h1>
+          <h1>Citas</h1>
           <button
             className="btn btn-outline-success fs-5 mb-2"
-            // onClick={handleShowNuevo}
+            onClick={handleShowNuevo}
           >
-            <AiOutlineUserAdd /> Nuevo Paciente
+            <AiOutlineUserAdd /> Agendar cita
           </button>
         </div>
 
         <div className="divhr"></div>
         <br />
 
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Paciente`</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Hora</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          {/* {console.log(pacientes.apiResponse)} */}
-
-          <tbody>
-            {citas.apiResponse.length > 0 &&
-              citas.apiResponse.map((cita) => (
+        {citas.apiResponse && (
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Paciente</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Hora</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {citas.apiResponse.map((cita) => (
                 <tr key={cita._id}>
                   <td>{cita.paciente}</td>
                   <td>{cita.fecha}</td>
@@ -184,47 +205,31 @@ export const PacientesApiComponent = () => {
                     </button>
                     <button
                       className="btn btn-outline-warning"
-                      // onClick={() => handleShowEdit(usuario.id)}
+                      onClick={() => handleShowEdit(cita._id)}
                     >
                       Editar
                     </button>
                   </td>
                 </tr>
               ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="result-block-container">
-        {state.showResult && (
-          <div
-            className="result-block"
-            data-testid="api-result"
-          >
-            <h6 className="muted">Result</h6>
-            <Highlight>
-              <span>{JSON.stringify(state.apiMessage, null, 2)}</span>
-            </Highlight>
-            <Button
-              color="primary"
-              className="mt-5"
-              onClick={(e) =>
-                setState({
-                  ...state,
-                  showResult: false,
-                })
-              }
-              disabled={!audience}
-            >
-              ocultar
-            </Button>
-          </div>
+            </tbody>
+          </table>
         )}
       </div>
+
+      <ModalNew
+        show={showNuevo}
+        handleClose={handleClose}
+      />
+      <ModalEditar
+        show={showEdit}
+        handleClose={handleClose}
+        id_paciente={id}
+      />
     </>
   )
 }
 
-export default withAuthenticationRequired(PacientesApiComponent, {
+export default withAuthenticationRequired(Citas, {
   onRedirecting: () => <Loading />,
 })
