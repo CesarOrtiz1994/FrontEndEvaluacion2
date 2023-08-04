@@ -1,33 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { getConfig } from "../../config";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import { toast } from "react-toastify";
-
+import React, { useEffect, useState } from "react"
+import { useAuth0 } from "@auth0/auth0-react"
+import { getConfig } from "../../config"
+import Button from "react-bootstrap/Button"
+import Modal from "react-bootstrap/Modal"
+import { toast } from "react-toastify"
 
 export default function ModalNewPacientes({ show, handleClose }) {
-  const { apiOrigin = "http://localhost:3010" } = getConfig();
-  const [nombre, setNombre] = useState("");
-  const [edad, setEdad] = useState("");
-  const [tipoSangre, setTipoSangre] = useState("");
-  const { getAccessTokenSilently } =
-  useAuth0();
+  const { apiOrigin = "http://localhost:3010" } = getConfig()
+  const [nombre, setNombre] = useState("")
+  const [edad, setEdad] = useState("")
+  const [tipoSangre, setTipoSangre] = useState("")
+  const { getAccessTokenSilently, user } = useAuth0()
 
   const [pacientes, setPacientes] = useState({
     showResult: false,
     apiResponse: "",
     error: null,
-  });
+  })
 
   useEffect(() => {
-    limpiar();
-  }, [show]);
+    limpiar()
+  }, [show])
 
   const store = async (e) => {
-    e.preventDefault();
-      if (validate()) {
-      const token = await getAccessTokenSilently();
+    e.preventDefault()
+    if (validate()) {
+      const token = await getAccessTokenSilently()
 
       const response = await fetch(`${apiOrigin}/api/paciente`, {
         method: "POST",
@@ -35,48 +33,51 @@ export default function ModalNewPacientes({ show, handleClose }) {
           name: nombre,
           edad: edad,
           sangre: tipoSangre,
+          idDoctor: user.sub.split("|")[1],
         }),
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      });
+      })
 
-      const responseData = await response.json();
+      const responseData = await response.json()
       setPacientes({
         ...pacientes,
         showResult: true,
         apiResponse: responseData,
-      });
-      toast.success("Paciente creado con exito");
-      handleClose();
+      })
+      toast.success("Paciente creado con exito")
+      handleClose()
     }
-    
-  };
+  }
 
   const validate = () => {
     if (nombre === "") {
-      toast.error("El nombre es obligatorio");
-      return false;
+      toast.error("El nombre es obligatorio")
+      return false
     } else if (edad === "") {
-      toast.error("La edad es obligatoria");
-      return false;
+      toast.error("La edad es obligatoria")
+      return false
     } else if (tipoSangre === "") {
-      toast.error("El tipo de sangre es obligatoria");
-      return false;
+      toast.error("El tipo de sangre es obligatoria")
+      return false
     } else {
-      return true;
+      return true
     }
-  };
+  }
 
   const limpiar = () => {
-    setEdad("");
-    setNombre("");
-    setTipoSangre("");
-  };
+    setEdad("")
+    setNombre("")
+    setTipoSangre("")
+  }
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal
+      show={show}
+      onHide={handleClose}
+    >
       <Modal.Header closeButton>
         <Modal.Title>Crear nuevo Paciente</Modal.Title>
       </Modal.Header>
@@ -89,7 +90,6 @@ export default function ModalNewPacientes({ show, handleClose }) {
               className="form-control"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              
             />
           </div>
           <div className="mb-3">
@@ -99,7 +99,6 @@ export default function ModalNewPacientes({ show, handleClose }) {
               className="form-control"
               value={edad}
               onChange={(e) => setEdad(e.target.value)}
-              
             />
           </div>
           <div className="mb-3">
@@ -109,7 +108,6 @@ export default function ModalNewPacientes({ show, handleClose }) {
               className="form-control"
               value={tipoSangre}
               onChange={(e) => setTipoSangre(e.target.value)}
-              
             />
           </div>
           {/* este es un ejemplo de como se hace un select 
@@ -126,14 +124,21 @@ export default function ModalNewPacientes({ show, handleClose }) {
               <option value="3">Jefe de area</option>
             </select>
           </div> */}
-          <Button variant="secondary" onClick={handleClose} className="m-2">
+          <Button
+            variant="secondary"
+            onClick={handleClose}
+            className="m-2"
+          >
             Cerrar
           </Button>
-          <Button variant="primary" type="submit">
+          <Button
+            variant="primary"
+            type="submit"
+          >
             Guardar
           </Button>
         </form>
       </Modal.Body>
     </Modal>
-  );
+  )
 }

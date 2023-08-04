@@ -5,8 +5,10 @@ import Loading from "../components/Loading"
 import { Alert } from "reactstrap"
 import { AiOutlineUserAdd } from "react-icons/ai"
 
-import ModalEditar from "../components/citas/ModalEditar"
+// import ModalEditar from "../components/citas/ModalEditar"
 import ModalNew from "../components/citas/ModalNew"
+import ModalDetails from "../components/citas/ModalDetails"
+import ModalEliminar from "../components/citas/ModalEliminar"
 import { ToastContainer } from "react-toastify"
 
 export const Citas = () => {
@@ -25,15 +27,23 @@ export const Citas = () => {
   })
 
   const [showNuevo, setShowNuevo] = useState(false)
-  const [showEdit, setShowEdit] = useState(false)
-  const [id, setId] = useState(0)
+  // const [showEdit, setShowEdit] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
+  const [citaDetails, setCitaDetails] = useState(null)
 
-  const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } =
-    useAuth0()
+  const {
+    getAccessTokenSilently,
+    loginWithPopup,
+    getAccessTokenWithPopup,
+    user,
+  } = useAuth0()
 
   const handleClose = () => {
     setShowNuevo(false)
-    setShowEdit(false)
+    // setShowEdit(false)
+    setShowDetails(false)
+    setShowDelete(false)
     getCitas()
   }
 
@@ -41,10 +51,10 @@ export const Citas = () => {
     setShowNuevo(true)
   }
 
-  const handleShowEdit = (id) => {
-    setShowEdit(true)
-    setId(id)
-  }
+  // const handleShowEdit = (cita) => {
+  // setShowEdit(true)
+  // setCitaDetails(cita)
+  // }
 
   useEffect(() => {
     getCitas()
@@ -80,44 +90,32 @@ export const Citas = () => {
         error: error.error,
       })
     }
-
-    // await callApi()
   }
 
-  // const callApi = async () => {
-  //   try {
-  //     const token = await getAccessTokenSilently()
-  //     console.log(token)
+  function toggleDetails(cita) {
+    setCitaDetails(cita)
+    setShowDetails(true)
+  }
 
-  //     const response = await fetch(`${apiOrigin}/api/private`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-
-  //     const responseData = await response.json()
-
-  //     setState({
-  //       ...state,
-  //       showResult: true,
-  //       apiMessage: responseData,
-  //     })
-  //   } catch (error) {
-  //     setState({
-  //       ...state,
-  //       error: error.error,
-  //     })
-  //   }
-  // }
+  function toggleDelete(cita_id) {
+    setCitaDetails(cita_id)
+    setShowDelete(true)
+  }
 
   const getCitas = async () => {
     try {
       const token = await getAccessTokenSilently()
-      const response = await fetch(`${apiOrigin}/api/citas`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const idDoctor = user.sub.split("|")[1]
+      console.log(idDoctor)
+      const response = await fetch(
+        `${apiOrigin}/api/citas?idDoctor=${idDoctor}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       const responseData = await response.json()
       setCitas({
         ...citas,
@@ -193,21 +191,27 @@ export const Citas = () => {
             <tbody>
               {citas.apiResponse.map((cita) => (
                 <tr key={cita._id}>
-                  <td>{cita.paciente}</td>
+                  <td>{cita.paciente.name}</td>
                   <td>{cita.fecha}</td>
                   <td>{cita.hora}</td>
                   <td>
                     <button
                       className="btn btn-outline-danger me-2"
-                      // onClick={() => deleteUsuario(usuario.id)}
+                      onClick={() => toggleDelete(cita._id)}
                     >
                       Eliminar
                     </button>
-                    <button
+                    {/* <button
                       className="btn btn-outline-warning"
-                      onClick={() => handleShowEdit(cita._id)}
+                      onClick={() => handleShowEdit(cita)}
                     >
                       Editar
+                    </button> */}
+                    <button
+                      className="btn btn-outline-info ms-2"
+                      onClick={() => toggleDetails(cita)}
+                    >
+                      Detalles
                     </button>
                   </td>
                 </tr>
@@ -216,16 +220,33 @@ export const Citas = () => {
           </table>
         )}
       </div>
-
-      <ModalNew
-        show={showNuevo}
-        handleClose={handleClose}
-      />
-      <ModalEditar
-        show={showEdit}
-        handleClose={handleClose}
-        id_paciente={id}
-      />
+      {showNuevo && (
+        <ModalNew
+          show={showNuevo}
+          handleClose={handleClose}
+        />
+      )}
+      {/* {showEdit && (
+        <ModalEditar
+          show={showEdit}
+          handleClose={handleClose}
+          citaDetails={citaDetails}
+        />
+      )} */}
+      {showDetails && (
+        <ModalDetails
+          show={showDetails}
+          handleClose={handleClose}
+          citaDetails={citaDetails}
+        />
+      )}
+      {showDelete && (
+        <ModalEliminar
+          show={showDelete}
+          handleClose={handleClose}
+          citaId={citaDetails}
+        />
+      )}
     </>
   )
 }

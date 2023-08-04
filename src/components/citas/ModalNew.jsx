@@ -31,16 +31,14 @@ export default function ModalNew({ show, handleClose }) {
     if (validate()) {
       const token = await getAccessTokenSilently()
       const idDoctor = user.sub.split("|")[1]
-      console.log(idDoctor)
       const idPaciente = paciente
-      console.log(idPaciente)
       const response = await fetch(`${apiOrigin}/api/citas`, {
         method: "POST",
         body: JSON.stringify({
-          idPaciente,
+          paciente: idPaciente,
           fecha,
           hora,
-          idDoctor,
+          doctor: idDoctor,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -54,12 +52,10 @@ export default function ModalNew({ show, handleClose }) {
         showResult: true,
         apiResponse: responseData,
       })
-      console.log("errores -> ", responseData.error?.errors)
       if (responseData.error) {
         const errors = responseData.error?.errors
         Object.keys(errors).forEach(function (key) {
           toast.error(errors[key]["message"])
-          console.log(errors[key]["message"])
         })
       } else {
         toast.success("Cita creada con exito")
