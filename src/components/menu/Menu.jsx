@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from "react";
-import "./menu.css";
+import React, { useEffect, useState } from "react"
+import "./menu.css"
 import {
   BsFillArrowLeftSquareFill,
   BsFillArrowRightSquareFill,
   BsDoorClosedFill,
-} from "react-icons/bs";
-import { FaHome, FaUserCircle } from "react-icons/fa";
-import { FiPackage } from "react-icons/fi";
-import MenuItems from "./MenuItems";
-import { useAuth0 } from "@auth0/auth0-react";
-
+} from "react-icons/bs"
+import { FaHome, FaUserCircle } from "react-icons/fa"
+import { AiFillSchedule } from "react-icons/ai"
+import { FiPackage } from "react-icons/fi"
+import MenuItems from "./MenuItems"
+import { useAuth0 } from "@auth0/auth0-react"
 
 export default function Menu(props) {
-  const [inactive, setInactive] = useState(false);
-  const {
-    logout
-  } = useAuth0();
+  const [inactive, setInactive] = useState(false)
+  const { logout } = useAuth0()
 
   const logoutWithRedirect = () =>
     logout({
-        logoutParams: {
-          returnTo: window.location.origin,
-        }
-    });
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+    })
 
-  let menuItems = [];
+  let menuItems = []
 
   menuItems = [
     {
@@ -40,21 +38,27 @@ export default function Menu(props) {
     {
       name: "Medicamentos",
       icon: <FiPackage />,
-      to: "/pacientes",
+      to: "/medicamentos",
     },
-  ];
+    {
+      name: "Citas",
+      icon: <AiFillSchedule />,
+      to: "/citas",
+    },
+  ]
 
   useEffect(() => {
-    props.onCollapse(inactive);
-  }, [inactive]);
+    props.onCollapse(inactive)
+  }, [inactive])
 
   return (
     <div className={`side-menu ${inactive ? "inactive" : ""}`}>
       <div className="top-section">
-        <div className="logo">
-    
-        </div>
-        <div className="toggle-menu-btn" onClick={() => setInactive(!inactive)}>
+        <div className="logo"></div>
+        <div
+          className="toggle-menu-btn"
+          onClick={() => setInactive(!inactive)}
+        >
           {inactive ? (
             <BsFillArrowRightSquareFill />
           ) : (
@@ -80,7 +84,10 @@ export default function Menu(props) {
       <div className="side-menu-footer">
         <ul>
           <li>
-            <button onClick={() => logoutWithRedirect()} className="menu-item">
+            <button
+              onClick={() => logoutWithRedirect()}
+              className="menu-item"
+            >
               <div className="menu-icon">
                 <BsDoorClosedFill />
               </div>
@@ -90,5 +97,5 @@ export default function Menu(props) {
         </ul>
       </div>
     </div>
-  );
+  )
 }
