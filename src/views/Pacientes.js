@@ -28,8 +28,10 @@ export const PacientesApiComponent = () => {
   const [showEdit, setShowEdit] = useState(false)
   const [id, setId] = useState(0)
 
-  const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup } =
+  const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup, user } =
     useAuth0()
+
+  
 
   const handleClose = () => {
     setShowNuevo(false)
@@ -113,10 +115,11 @@ export const PacientesApiComponent = () => {
   const getPacientes = async () => {
     try {
       const token = await getAccessTokenSilently()
+      const idDoctor = user.sub.split("|")[1]
       const response = await fetch(`${apiOrigin}/api/pacientes`, {
         method: "POST",
         body: JSON.stringify({
-          idDoctor: user.sub
+          idDoctor: idDoctor
         }),
         headers: {
           'Content-Type': 'application/json',
