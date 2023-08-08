@@ -18,6 +18,7 @@ import "./App.css";
 
 // fontawesome
 import initFontAwesome from "./utils/initFontAwesome";
+import Medicamentos from "./views/Medicamentos";
 initFontAwesome();
 
 const App = () => {
@@ -48,7 +49,7 @@ const App = () => {
             { isAuthenticated ? ( <Route path="/" exact component={Profile} /> ) : ( <Route path="/" exact component={Home} /> )}
             <Route path="/external-api" component={ExternalApi} />
             <Route path="/pacientes" component={Pacientes} />
-            
+            <Route path="/medicamentos" component={Medicamentos} />
           </Switch>
         </div>
       </div>
