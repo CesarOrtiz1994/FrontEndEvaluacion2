@@ -7,13 +7,18 @@ import { getConfig } from "../../config"
 
 export default function PacientesSelect(props) {
   const { apiOrigin = "http://localhost:3010" } = getConfig()
-  const { getAccessTokenSilently } = useAuth0()
+  const { getAccessTokenSilently, user } = useAuth0()
   const [options, setOptions] = useState([])
 
   async function getPacientes() {
     const token = await getAccessTokenSilently()
+    const idDoctor = user.sub.split("|")[1]
+
     const response = await fetch(`${apiOrigin}/api/pacientes`, {
-      method: "GET",
+      method: "POST",
+      body: JSON.stringify({
+        idDoctor: idDoctor
+      }),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
