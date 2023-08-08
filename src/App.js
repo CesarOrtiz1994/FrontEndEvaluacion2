@@ -16,8 +16,9 @@ import ExternalApi from "./views/ExternalApi"
 import Home from "./views/Home"
 import Citas from "./views/Citas"
 // fontawesome
-import initFontAwesome from "./utils/initFontAwesome"
-initFontAwesome()
+import initFontAwesome from "./utils/initFontAwesome";
+import Medicamentos from "./views/Medicamentos";
+initFontAwesome();
 
 const App = () => {
   const { isLoading, error, isAuthenticated } = useAuth0()
@@ -82,6 +83,7 @@ const App = () => {
             path="/citas"
             component={Citas}
           />
+          <Route path="/medicamentos" component={Medicamentos} />
           {/* </Switch> */}
         </div>
       </div>
