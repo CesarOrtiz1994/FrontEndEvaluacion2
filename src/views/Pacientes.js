@@ -7,6 +7,7 @@ import { AiOutlineUserAdd } from "react-icons/ai"
 
 import ModalEditPacientes from "../components/Pacientes/ModalEditPacientes"
 import ModalNewPaciente from "../components/Pacientes/ModalNewPacientes"
+import ModalEliminar from "../components/Pacientes/ModalEliminar"
 import { ToastContainer } from "react-toastify"
 
 export const PacientesApiComponent = () => {
@@ -26,6 +27,8 @@ export const PacientesApiComponent = () => {
 
   const [showNuevo, setShowNuevo] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
+
   const [id, setId] = useState(0)
 
   const { getAccessTokenSilently, loginWithPopup, getAccessTokenWithPopup, user } =
@@ -36,6 +39,7 @@ export const PacientesApiComponent = () => {
   const handleClose = () => {
     setShowNuevo(false)
     setShowEdit(false)
+    setShowDelete(false)
     getPacientes()
   }
 
@@ -45,6 +49,11 @@ export const PacientesApiComponent = () => {
 
   const handleShowEdit = (id) => {
     setShowEdit(true)
+    setId(id)
+  }
+
+  const handleShowDelete = (id) => {
+    setShowDelete(true)
     setId(id)
   }
 
@@ -207,7 +216,7 @@ export const PacientesApiComponent = () => {
                   <td>
                     <button
                       className="btn btn-outline-danger me-2"
-                      // onClick={() => deleteUsuario(usuario.id)}
+                      onClick={() => handleShowDelete(pacientes._id)}
                     >
                       Eliminar
                     </button>
@@ -234,6 +243,12 @@ export const PacientesApiComponent = () => {
         handleClose={handleClose}
         id_paciente={id}
       />
+      <ModalEliminar
+        show={showDelete}
+        handleClose={handleClose}
+        id_paciente={id}
+      />
+
     </>
   )
 }
