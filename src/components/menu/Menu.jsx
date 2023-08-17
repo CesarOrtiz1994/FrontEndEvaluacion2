@@ -10,6 +10,8 @@ import { AiFillSchedule } from "react-icons/ai"
 import { FiPackage } from "react-icons/fi"
 import MenuItems from "./MenuItems"
 import { useAuth0 } from "@auth0/auth0-react"
+import logo from "../../../src/assets/logo.svg";
+
 
 export default function Menu(props) {
   const [inactive, setInactive] = useState(false)
@@ -28,7 +30,12 @@ export default function Menu(props) {
     {
       name: "Home",
       icon: <FaHome />,
-      to: "/",
+      to: "/home",
+    },
+    {
+      name: "Perfil",
+      icon: <FaUserCircle />,
+      to: "/profile",
     },
     {
       name: "Pacientes",
@@ -54,7 +61,7 @@ export default function Menu(props) {
   return (
     <div className={`side-menu ${inactive ? "inactive" : ""}`}>
       <div className="top-section">
-        <div className="logo"></div>
+      <img className src={logo} alt="Logo" width="200" />
         <div
           className="toggle-menu-btn"
           onClick={() => setInactive(!inactive)}

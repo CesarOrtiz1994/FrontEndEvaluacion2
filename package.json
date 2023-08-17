@@ -38,6 +38,7 @@
     "react-dom": "^18",
     "react-icon": "^1.0.0",
     "react-icons": "^4.10.1",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^5.3",
     "react-scripts": "^5.0",
     "react-select": "^5.7.4",

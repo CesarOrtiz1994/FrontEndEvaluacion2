@@ -84,6 +84,8 @@ const App = () => {
             component={Citas}
           />
           <Route path="/medicamentos" component={Medicamentos} />
+          <Route path="/profile" component={Profile} />
+            <Route path="/home" component={Home} />
           {/* </Switch> */}
         </div>
       </div>
